@@ -149,6 +149,7 @@
 		3F1F47831B9656B900CD99A3 /* KVOTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F0F029D1B6FFE610046A4D5 /* KVOTests.mm */; };
 		3F222C4E1E26F51300CA0713 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F222C4D1E26F51300CA0713 /* ThreadSafeReference.swift */; };
 		3F2633C31E9D630000B32D30 /* PrimitiveListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2633C21E9D630000B32D30 /* PrimitiveListTests.swift */; };
+		3F29FC4A204F477500995C6C /* RLMPermissionsAPITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6E7A51E8C2BDF00D4C8B4 /* RLMPermissionsAPITests.m */; };
 		3F2E66641CA0BA11004761D5 /* NotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E66611CA0B9D5004761D5 /* NotificationTests.m */; };
 		3F2E66651CA0BA12004761D5 /* NotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E66611CA0B9D5004761D5 /* NotificationTests.m */; };
 		3F336E8A1DA2FA14006CB5A0 /* RLMSyncConfiguration_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A36236A1D83868F00945A54 /* RLMSyncConfiguration_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -220,6 +221,7 @@
 		3F9801B11C90FD31000A8B07 /* results_notifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F9801AE1C90FD2D000A8B07 /* results_notifier.cpp */; };
 		3F9863BB1D36876B00641C98 /* RLMClassInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F9863B91D36876B00641C98 /* RLMClassInfo.mm */; };
 		3F9863BC1D36876B00641C98 /* RLMClassInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F9863B91D36876B00641C98 /* RLMClassInfo.mm */; };
+		3F9A4A7A204F1EBE00DADCD2 /* SwiftPermissionsAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A877BEE1EAE9F79001BEC40 /* SwiftPermissionsAPITests.swift */; };
 		3FAB08481E1EC382001BC8DA /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FAB08441E1EC382001BC8DA /* object.cpp */; };
 		3FAB08491E1EC385001BC8DA /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FAB08441E1EC382001BC8DA /* object.cpp */; };
 		3FAB084A1E1EC3A2001BC8DA /* sync_client.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1A15366C1DB0464800C0EC93 /* sync_client.hpp */; };
@@ -2451,6 +2453,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F29FC4A204F477500995C6C /* RLMPermissionsAPITests.m in Sources */,
 				1A2713D71E3BBAC8001F6BFC /* RLMAncillaryObjectServerTests.m in Sources */,
 				1A2D7A521DA5BCEC006AD7D6 /* RLMMultiProcessTestCase.m in Sources */,
 				E8267FF11D90B8E700E001C7 /* RLMObjectServerTests.mm in Sources */,
@@ -2462,6 +2465,7 @@
 				E86E61241D91E4E200DC2419 /* RLMTestCase.m in Sources */,
 				3F73BC921E3A877300FE80B6 /* RLMTestUtils.m in Sources */,
 				1AA5AEA11D98C99800ED8C27 /* SwiftObjectServerTests.swift in Sources */,
+				3F9A4A7A204F1EBE00DADCD2 /* SwiftPermissionsAPITests.swift in Sources */,
 				3FB60BAD2040999300583735 /* SwiftPermissionsTests.swift in Sources */,
 				1AA5AE981D989BE400ED8C27 /* SwiftSyncTestCase.swift in Sources */,
 			);

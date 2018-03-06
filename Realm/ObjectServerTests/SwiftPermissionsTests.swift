@@ -26,7 +26,7 @@ protocol ThingWithPrivileges {
 extension RealmPermission: ThingWithPrivileges {}
 extension ClassPermission: ThingWithPrivileges {}
 
-class SwiftPermissionsAPITests: SwiftSyncTestCase {
+class SwiftPermissionsTests: SwiftSyncTestCase {
     var userA: SyncUser!
     var userB: SyncUser!
     var userC: SyncUser!
