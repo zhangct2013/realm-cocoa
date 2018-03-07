@@ -20,6 +20,7 @@
 
 #import "RLMJSONModels.h"
 #import "RLMSyncConfiguration_Private.hpp"
+#import "RLMSyncManager.h"
 #import "RLMSyncUtil_Private.hpp"
 #import "RLMSyncUser_Private.hpp"
 #import "RLMRealmConfiguration+Sync.h"
@@ -55,6 +56,20 @@ NSString *const kRLMSyncRegisterKey             = @"register";
 NSString *const kRLMSyncTokenKey                = @"token";
 NSString *const kRLMSyncUnderlyingErrorKey      = @"underlying_error";
 NSString *const kRLMSyncUserIDKey               = @"user_id";
+
+NSString *const kRLMSyncRequestAuthorizationHeaderNameKey = @"authorizationHeaderName";
+NSString *const kRLMSyncRequestExtraHeadersKey            = @"extraHeaders";
+
+NSDictionary *RLMSyncRequestOptions() {
+    NSMutableDictionary *requestOptions = [[NSMutableDictionary alloc] init];
+    if (NSString *authorizationHeaderName = [RLMSyncManager sharedManager].authorizationHeaderName) {
+        requestOptions[kRLMSyncRequestAuthorizationHeaderNameKey] = authorizationHeaderName;
+    }
+    if (NSDictionary<NSString *, NSString *> *customRequestHeaders = [RLMSyncManager sharedManager].customRequestHeaders) {
+        requestOptions[kRLMSyncRequestExtraHeadersKey] = customRequestHeaders;
+    }
+    return [requestOptions copy];
+}
 
 #pragma mark - C++ APIs
 

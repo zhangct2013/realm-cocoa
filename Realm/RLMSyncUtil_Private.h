@@ -62,6 +62,11 @@ extern NSString *const kRLMSyncRegisterKey;
 extern NSString *const kRLMSyncUnderlyingErrorKey;
 extern NSString *const kRLMSyncUserIDKey;
 
+extern NSString *const kRLMSyncRequestAuthorizationHeaderNameKey;
+extern NSString *const kRLMSyncRequestExtraHeadersKey;
+
+NSDictionary *RLMSyncRequestOptions(void);
+
 #define RLM_SYNC_UNINITIALIZABLE \
 - (instancetype)init __attribute__((unavailable("This type cannot be created directly"))); \
 + (instancetype)new __attribute__((unavailable("This type cannot be created directly")));

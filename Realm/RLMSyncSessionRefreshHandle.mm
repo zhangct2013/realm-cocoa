@@ -271,6 +271,8 @@ static const NSTimeInterval RLMRefreshBuffer = 10;
     [RLMNetworkClient sendRequestToEndpoint:[RLMSyncAuthEndpoint endpoint]
                                      server:self.authServerURL
                                        JSON:json
+                                    timeout:60
+                                    options:RLMSyncRequestOptions()
                                  completion:handler];
 }
 
