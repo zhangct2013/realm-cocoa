@@ -708,7 +708,12 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
 }
 
 - (BOOL)refresh {
-    return _realm->refresh();
+    try {
+        return _realm->refresh();
+    }
+    catch (std::exception const& ex) {
+        @throw RLMException(ex);
+    }
 }
 
 - (void)addObject:(__unsafe_unretained RLMObject *const)object {
