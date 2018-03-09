@@ -22,6 +22,9 @@
 
 #import "RLMTestUtils.h"
 
+#import "RLMObject_Private.h"
+#import "RLMRealm_Dynamic.h"
+
 #define APPLY_PERMISSION(ma_permission, ma_user) do { \
     XCTestExpectation *ex = [self expectationWithDescription:@"apply permission"]; \
     [ma_user applyPermission:ma_permission callback:^(NSError *err) {              \
@@ -44,6 +47,24 @@
 @property (nonatomic) RLMArray<RLMPermission *><RLMPermission> *permissions;
 @end
 @implementation LinkToObjectWithPermissions
+@end
+
+@implementation FakeObject
++ (Class)objectUtilClass:(BOOL)isSwift { return RLMObjectUtilClass(isSwift); }
++ (NSArray *)ignoredProperties { return nil; }
++ (NSArray *)indexedProperties { return nil; }
++ (NSString *)primaryKey { return nil; }
++ (NSArray *)requiredProperties { return nil; }
++ (NSDictionary *)linkingObjectsProperties { return nil; }
++ (BOOL)shouldIncludeInDefaultSchema { return NO; }
++ (NSString *)_realmObjectName { return nil; }
++ (NSDictionary *)_realmColumnNames { return nil; }
+@end
+
+@interface SchemaChangeObject : FakeObject
+@property (nonatomic) int value;
+@end
+@implementation SchemaChangeObject
 @end
 
 @interface RLMPermissionsTests : RLMSyncTestCase
@@ -337,8 +358,29 @@ static void createPermissions(RLMArray<RLMPermission> *permissions) {
 }
 
 - (void)testRealmModifySchema {
-    // awkward to test due to that reverts will normally crash
-    // probably need to spawn a child process?
+    RLMSetTreatFakeObjectAsRLMObject(YES);
+
+    NSURL *url = [self createRealmWithName:_cmd permissions:^(RLMRealm *realm) {
+        createPermissions([RLMRealmPermission objectInRealm:realm].permissions);
+        addUserToRole(realm, @"reader", self.userA.identity);
+        addUserToRole(realm, @"writer", self.userA.identity);
+    }];
+
+    auto syncConfig = [[RLMSyncConfiguration alloc] initWithUser:self.userA realmURL:url];
+    syncConfig.isPartial = true;
+    RLMRealmConfiguration *config = [RLMRealmConfiguration new];
+    config.objectClasses = @[SchemaChangeObject.class];
+    config.syncConfiguration = syncConfig;
+
+    auto realm = [RLMRealm realmWithConfiguration:config error:nil];
+    [realm transactionWithBlock:^{}];
+    realm.autorefresh = NO;
+
+    [self waitForUploadsForRealm:realm error:nil];
+    [self waitForDownloadsForRealm:realm error:nil];
+    RLMAssertThrowsWithReasonMatching([realm refresh], @"schema");
+
+    RLMSetTreatFakeObjectAsRLMObject(NO);
 }
 
 - (void)testClassRead {
