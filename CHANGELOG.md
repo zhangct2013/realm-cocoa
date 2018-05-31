@@ -11,7 +11,9 @@ x.x.x Release notes (yyyy-MM-dd)
 
 ### Bugfixes
 
-* None.
+* Fix crash when getting the description of a `MigrationObject` which has
+  `List` properties.
+* Fix crash when calling `dynamicList()` on a `MigrationObject`.
 
 3.6.0 Release notes (2018-05-29)
 =============================================================
