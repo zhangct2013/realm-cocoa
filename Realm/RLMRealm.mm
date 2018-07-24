@@ -33,7 +33,6 @@
 #import "RLMRealmUtil.hpp"
 #import "RLMSchema_Private.hpp"
 #import "RLMSyncManager_Private.h"
-#import "RLMSyncUtil_Private.hpp"
 #import "RLMThreadSafeReference_Private.hpp"
 #import "RLMUpdateChecker.hpp"
 #import "RLMUtil.hpp"
@@ -47,7 +46,11 @@
 #include <realm/util/scope_exit.hpp>
 #include <realm/version.hpp>
 
+#if REALM_ENABLE_SYNC
+#import "RLMSyncUtil_Private.hpp"
+
 #import "sync/sync_session.hpp"
+#endif
 
 using namespace realm;
 using util::File;
@@ -199,52 +202,51 @@ NSData *RLMRealmValidatedEncryptionKey(NSData *key) {
     }
     static dispatch_queue_t queue = dispatch_queue_create("io.realm.asyncOpenDispatchQueue", DISPATCH_QUEUE_CONCURRENT);
     dispatch_async(queue, ^{
-        @autoreleasepool {
-            if (strongReferenceToSyncedRealm) {
-                // Sync behavior: get the raw session, then wait for it to download.
-                if (auto session = sync_session_for_realm(strongReferenceToSyncedRealm)) {
-                    // Wait for the session to download, then open it.
-                    session->wait_for_download_completion([=](std::error_code error_code) {
-                        dispatch_async(callbackQueue, ^{
-                            (void)strongReferenceToSyncedRealm;
-                            NSError *error = nil;
-                            if (error_code == std::error_code{}) {
-                                // Success
-                                @autoreleasepool {
-                                    // Try opening the Realm on the destination queue.
-                                    RLMRealm *localRealm = [RLMRealm realmWithConfiguration:configuration error:&error];
-                                    callback(localRealm, error);
-                                }
-                            } else {
-                                // Failure
-                                callback(nil, make_sync_error(RLMSyncSystemErrorKindSession,
-                                                              @(error_code.message().c_str()),
-                                                              error_code.value(),
-                                                              nil));
-                            }
-                        });
-                    });
-                } else {
-                    dispatch_async(callbackQueue, ^{
-                        callback(nil, make_sync_error(RLMSyncSystemErrorKindSession,
-                                                      @"Cannot asynchronously open synced Realm, because the associated session previously experienced a fatal error",
-                                                      NSNotFound,
-                                                      nil));
-                    });
-                    return;
+        if (!strongReferenceToSyncedRealm) {
+            // Default behavior: just dispatch onto the destination queue and open the Realm.
+            dispatch_async(callbackQueue, ^{
+                @autoreleasepool {
+                    NSError *error = nil;
+                    RLMRealm *localRealm = [RLMRealm realmWithConfiguration:configuration error:&error];
+                    callback(localRealm, error);
                 }
-            } else {
-                // Default behavior: just dispatch onto the destination queue and open the Realm.
-                dispatch_async(callbackQueue, ^{
-                    @autoreleasepool {
+            });
+            return;
+        }
+#if REALM_ENABLE_SYNC
+        @autoreleasepool {
+            // Sync behavior: get the raw session, then wait for it to download.
+            if (auto session = sync_session_for_realm(strongReferenceToSyncedRealm)) {
+                // Wait for the session to download, then open it.
+                session->wait_for_download_completion([=](std::error_code error_code) {
+                    dispatch_async(callbackQueue, ^{
+                        (void)strongReferenceToSyncedRealm;
                         NSError *error = nil;
-                        RLMRealm *localRealm = [RLMRealm realmWithConfiguration:configuration error:&error];
-                        callback(localRealm, error);
-                    }
+                        if (error_code == std::error_code{}) {
+                            // Success
+                            @autoreleasepool {
+                                // Try opening the Realm on the destination queue.
+                                RLMRealm *localRealm = [RLMRealm realmWithConfiguration:configuration error:&error];
+                                callback(localRealm, error);
+                            }
+                        } else {
+                            // Failure
+                            callback(nil, make_sync_error(RLMSyncSystemErrorKindSession,
+                                                          @(error_code.message().c_str()),
+                                                          error_code.value(),
+                                                          nil));
+                        }
+                    });
                 });
                 return;
             }
-        }
+            dispatch_async(callbackQueue, ^{
+                callback(nil, make_sync_error(RLMSyncSystemErrorKindSession,
+                                              @"Cannot asynchronously open synced Realm, because the associated session previously experienced a fatal error",
+                                              NSNotFound,
+                                              nil));
+            });
+#endif
     });
 }
 
@@ -860,6 +862,7 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
     return NO;
 }
 
+#if REALM_ENABLE_SYNC
 using Privilege = realm::ComputedPrivileges;
 static bool hasPrivilege(realm::ComputedPrivileges actual, realm::ComputedPrivileges expected) {
     return (static_cast<int>(actual) & static_cast<int>(expected)) == static_cast<int>(expected);
@@ -903,6 +906,7 @@ static bool hasPrivilege(realm::ComputedPrivileges actual, realm::ComputedPrivil
         .create = hasPrivilege(p, Privilege::Create),
     };
 }
+#endif
 
 - (void)registerEnumerator:(RLMFastEnumerator *)enumerator {
     if (!_collectionEnumerators) {

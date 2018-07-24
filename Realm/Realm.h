@@ -25,11 +25,14 @@
 #import <Realm/RLMPlatform.h>
 #import <Realm/RLMProperty.h>
 #import <Realm/RLMRealm.h>
-#import <Realm/RLMRealm+Sync.h>
 #import <Realm/RLMRealmConfiguration.h>
-#import <Realm/RLMRealmConfiguration+Sync.h>
 #import <Realm/RLMResults.h>
 #import <Realm/RLMSchema.h>
+
+#if REALM_ENABLE_SYNC
+#import <Realm/NSError+RLMSync.h>
+#import <Realm/RLMRealm+Sync.h>
+#import <Realm/RLMRealmConfiguration+Sync.h>
 #import <Realm/RLMSyncConfiguration.h>
 #import <Realm/RLMSyncCredentials.h>
 #import <Realm/RLMSyncManager.h>
@@ -38,4 +41,4 @@
 #import <Realm/RLMSyncSubscription.h>
 #import <Realm/RLMSyncUser.h>
 #import <Realm/RLMSyncUtil.h>
-#import <Realm/NSError+RLMSync.h>
+#endif

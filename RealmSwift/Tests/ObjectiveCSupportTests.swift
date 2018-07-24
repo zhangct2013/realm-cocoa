@@ -75,9 +75,11 @@ class ObjectiveCSupportTests: TestCase {
                        ObjectiveCSupport.convert(object: realm.configuration).inMemoryIdentifier,
                        "Configuration.inMemoryIdentifier must be equal to RLMConfiguration.inMemoryIdentifier")
 
+        #if REALM_ENABLE_SYNC
         XCTAssertEqual(realm.configuration.syncConfiguration?.realmURL,
                        ObjectiveCSupport.convert(object: realm.configuration).syncConfiguration?.realmURL,
                        "Configuration.syncConfiguration must be equal to RLMConfiguration.syncConfiguration")
+        #endif
 
         XCTAssertEqual(realm.configuration.encryptionKey,
                        ObjectiveCSupport.convert(object: realm.configuration).encryptionKey,

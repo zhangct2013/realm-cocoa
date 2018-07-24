@@ -28,6 +28,10 @@ fileprivate extension Sequence {
 }
 #endif
 
+#if !REALM_ENABLE_SYNC
+public struct SyncConfiguration {}
+#endif
+
 extension Realm {
     /**
      A `Configuration` instance describes the different options used to create an instance of a Realm.
@@ -222,7 +226,9 @@ extension Realm {
             } else if let inMemoryIdentifier = inMemoryIdentifier {
                 configuration.inMemoryIdentifier = inMemoryIdentifier
             } else if let syncConfiguration = syncConfiguration {
+                #if REALM_ENABLE_SYNC
                 configuration.syncConfiguration = syncConfiguration.asConfig()
+                #endif
             } else {
                 fatalError("A Realm Configuration must specify a path or an in-memory identifier.")
             }
@@ -245,11 +251,13 @@ extension Realm {
             var configuration = Configuration()
             configuration._path = rlmConfiguration.fileURL?.path
             configuration._inMemoryIdentifier = rlmConfiguration.inMemoryIdentifier
+            #if REALM_ENABLE_SYNC
             if let objcSyncConfig = rlmConfiguration.syncConfiguration {
                 configuration._syncConfiguration = SyncConfiguration(config: objcSyncConfig)
             } else {
                 configuration._syncConfiguration = nil
             }
+            #endif
             configuration.encryptionKey = rlmConfiguration.encryptionKey
             configuration.readOnly = rlmConfiguration.readOnly
             configuration.schemaVersion = rlmConfiguration.schemaVersion

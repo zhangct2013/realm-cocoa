@@ -130,6 +130,7 @@ public final class ObjectiveCSupport {
         return SortDescriptor(keyPath: object.keyPath, ascending: object.ascending)
     }
 
+    #if REALM_ENABLE_SYNC
     /// Convert a `SyncCredentials` to a `RLMSyncCredentials`.
     public static func convert(object: SyncCredentials) -> RLMSyncCredentials {
         return RLMSyncCredentials(object)
@@ -139,6 +140,7 @@ public final class ObjectiveCSupport {
     public static func convert(object: RLMSyncCredentials) -> SyncCredentials {
         return SyncCredentials(object)
     }
+    #endif
 
     /// Convert a `RLMShouldCompactOnLaunchBlock` to a Realm Swift compact block.
     public static func convert(object: @escaping RLMShouldCompactOnLaunchBlock) -> (Int, Int) -> Bool {
@@ -155,6 +157,7 @@ public final class ObjectiveCSupport {
     }
 
     /// Convert a `SyncConfiguration` to a `RLMSyncConfiguration`.
+    #if REALM_ENABLE_SYNC
     public static func convert(object: SyncConfiguration) -> RLMSyncConfiguration {
         return object.asConfig()
     }
@@ -163,4 +166,5 @@ public final class ObjectiveCSupport {
     public static func convert(object: RLMSyncConfiguration) -> SyncConfiguration {
         return SyncConfiguration(config: object)
     }
+    #endif
 }
