@@ -1321,9 +1321,8 @@ void QueryBuilder::apply_subquery_count_expression(RLMObjectSchema *objectSchema
     subqueryPredicate = transformPredicate(subqueryPredicate, simplify_self_value_for_key_path_function_expression);
 
     Query subquery = RLMPredicateToQuery(subqueryPredicate, collectionMemberObjectSchema, m_schema, m_group);
-//    add_numeric_constraint(RLMPropertyTypeInt, operatorType,
-//                           collectionColumn.resolve<LnkLst>(std::move(subquery)).count(), value);
-    @throw RLMException(@"FIXME");
+    add_numeric_constraint(RLMPropertyTypeInt, operatorType,
+                           collectionColumn.resolve<Link>(std::move(subquery)).count(), value);
 }
 
 void QueryBuilder::apply_function_subquery_expression(RLMObjectSchema *objectSchema, NSExpression *functionExpression,

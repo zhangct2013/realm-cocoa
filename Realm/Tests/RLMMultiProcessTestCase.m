@@ -109,6 +109,7 @@
     NSMutableDictionary *env = [NSProcessInfo.processInfo.environment mutableCopy];
     env[@"RLMProcessIsChild"] = @"true";
     env[@"RLMParentProcessBundleID"] = [NSBundle mainBundle].bundleIdentifier;
+    env[@"DYLD_INSERT_LIBRARIES"] = @"/Applications/Xcode-9.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.1.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib";
 
     // Don't inherit the config file in the subprocess, as multiple XCTest
     // processes talking to a single Xcode instance doesn't work at all
