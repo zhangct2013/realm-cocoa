@@ -843,22 +843,39 @@ public class SyncSubscription<Type: RealmCollectionValue> {
     }
 }
 
-extension Results {
+/// :nodoc:
+public protocol _SubscribableCollection {
+    associatedtype Element: RealmCollectionValue
+    func subscribe(named subscriptionName: String?, limit: Int?) -> SyncSubscription<Element>
+}
+
+extension Results: _SubscribableCollection {
     /// Subscribe to the query represented by this `Results`
     ///
-    /// The subscription will not have an explicit name.
-    ///
+    /// - parameter subscriptionName: An optional name for the subscription.
+    /// - parameter limit: The maximum number of objects to include in the subscription.
     /// - returns: The subscription.
-    public func subscribe() -> SyncSubscription<Element> {
+    public func subscribe(named subscriptionName: String? = nil, limit: Int? = nil) -> SyncSubscription<Element> {
+        if let limit = limit {
+            return SyncSubscription(rlmResults.subscribe(withName: subscriptionName, limit: UInt(limit)))
+        }
+        if let name = subscriptionName {
+            return SyncSubscription(rlmResults.subscribe(withName: name))
+        }
         return SyncSubscription(rlmResults.subscribe())
     }
+}
 
-    /// Subscribe to the query represented by this `Results`
+extension Slice where Base: _SubscribableCollection {
+    /// Subscribe to the slice of the query represented by this `Results`
     ///
-    /// - parameter subscriptionName: The name of the subscription.
+    /// - warning: Only slices with a `startIndex` of 0 can be subscribed to.
+    ///
+    /// - parameter subscriptionName: An optional name for the subscription.
     /// - returns: The subscription.
-    public func subscribe(named subscriptionName: String) -> SyncSubscription<Element> {
-        return SyncSubscription(rlmResults.subscribe(withName: subscriptionName))
+    public func subscribe(named subscriptionName: String? = nil) -> SyncSubscription<Base.Element> {
+        precondition(startIndex == base.startIndex, "Subscriptions with a non-zero start offset are not yet supported.")
+        return base.subscribe(named: subscriptionName, limit: (endIndex as! Int))
     }
 }
 

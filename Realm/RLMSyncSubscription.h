@@ -132,7 +132,18 @@ typedef NS_ENUM(NSInteger, RLMSyncSubscriptionState) {
 
  @see RLMSyncSubscription
 */
-- (RLMSyncSubscription *)subscribeWithName:(NSString *)subscriptionName;
+- (RLMSyncSubscription *)subscribeWithName:(nullable NSString *)subscriptionName;
+
+/**
+ Subscribe to the query represented by this `RLMResults`.
+
+ @param subscriptionName The name of the subscription
+
+ @return The subscription
+
+ @see RLMSyncSubscription
+ */
+- (RLMSyncSubscription *)subscribeWithName:(nullable NSString *)subscriptionName limit:(NSUInteger)limit;
 @end
 
 NS_ASSUME_NONNULL_END
