@@ -544,7 +544,7 @@ static bool canAggregate(RLMPropertyType type, bool allowDate) {
 
 #pragma mark - Thread Confined Protocol Conformance
 
-- (std::unique_ptr<realm::ThreadSafeReferenceBase>)makeThreadSafeReference {
+- (realm::ThreadSafeReference)makeThreadSafeReference {
     REALM_TERMINATE("Unexpected handover of unmanaged `RLMArray`");
 }
 
@@ -552,7 +552,7 @@ static bool canAggregate(RLMPropertyType type, bool allowDate) {
     REALM_TERMINATE("Unexpected handover of unmanaged `RLMArray`");
 }
 
-+ (instancetype)objectWithThreadSafeReference:(std::unique_ptr<realm::ThreadSafeReferenceBase>)reference
++ (instancetype)objectWithThreadSafeReference:(realm::ThreadSafeReference)reference
                                      metadata:(id)metadata
                                         realm:(RLMRealm *)realm {
     REALM_TERMINATE("Unexpected handover of unmanaged `RLMArray`");

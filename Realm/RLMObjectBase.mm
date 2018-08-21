@@ -358,28 +358,22 @@ id RLMCreateManagedAccessor(Class cls, __unsafe_unretained RLMRealm *realm, RLMC
 
 #pragma mark - Thread Confined Protocol Conformance
 
-- (std::unique_ptr<realm::ThreadSafeReferenceBase>)makeThreadSafeReference {
-    Object object(_realm->_realm, *_info->objectSchema, _row);
-    realm::ThreadSafeReference<Object> reference = _realm->_realm->obtain_thread_safe_reference(std::move(object));
-    return std::make_unique<realm::ThreadSafeReference<Object>>(std::move(reference));
+- (realm::ThreadSafeReference)makeThreadSafeReference {
+    return Object(_realm->_realm, *_info->objectSchema, _row);
 }
 
 - (id)objectiveCMetadata {
     return nil;
 }
 
-+ (instancetype)objectWithThreadSafeReference:(std::unique_ptr<realm::ThreadSafeReferenceBase>)reference
++ (instancetype)objectWithThreadSafeReference:(realm::ThreadSafeReference)reference
                                      metadata:(__unused id)metadata
                                         realm:(RLMRealm *)realm {
-    REALM_ASSERT_DEBUG(dynamic_cast<realm::ThreadSafeReference<Object> *>(reference.get()));
-    auto object_reference = static_cast<realm::ThreadSafeReference<Object> *>(reference.get());
-
-    Object object = realm->_realm->resolve_thread_safe_reference(std::move(*object_reference));
+    Object object = reference.resolve<Object>(realm->_realm);
     if (!object.is_valid()) {
         return nil;
     }
     NSString *objectClassName = @(object.get_object_schema().name.c_str());
-
     return RLMCreateObjectAccessor(realm, realm->_info[objectClassName], object.obj());
 }
 

@@ -512,9 +512,8 @@ static void RLMInsertObject(RLMManagedArray *ar, id object, NSUInteger index) {
 
 #pragma mark - Thread Confined Protocol Conformance
 
-- (std::unique_ptr<realm::ThreadSafeReferenceBase>)makeThreadSafeReference {
-    auto list_reference = _realm->_realm->obtain_thread_safe_reference(_backingList);
-    return std::make_unique<realm::ThreadSafeReference<realm::List>>(std::move(list_reference));
+- (realm::ThreadSafeReference)makeThreadSafeReference {
+    return _backingList;
 }
 
 - (RLMManagedArrayHandoverMetadata *)objectiveCMetadata {
@@ -524,13 +523,10 @@ static void RLMInsertObject(RLMManagedArray *ar, id object, NSUInteger index) {
     return metadata;
 }
 
-+ (instancetype)objectWithThreadSafeReference:(std::unique_ptr<realm::ThreadSafeReferenceBase>)reference
++ (instancetype)objectWithThreadSafeReference:(realm::ThreadSafeReference)reference
                                      metadata:(RLMManagedArrayHandoverMetadata *)metadata
                                         realm:(RLMRealm *)realm {
-    REALM_ASSERT_DEBUG(dynamic_cast<realm::ThreadSafeReference<realm::List> *>(reference.get()));
-    auto list_reference = static_cast<realm::ThreadSafeReference<realm::List> *>(reference.get());
-
-    auto list = realm->_realm->resolve_thread_safe_reference(std::move(*list_reference));
+    auto list = reference.resolve<realm::List>(realm->_realm);
     if (!list.is_valid()) {
         return nil;
     }
